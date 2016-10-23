@@ -51,16 +51,16 @@
     <script type="text/javascript">
         ymaps.ready(init);
 
-        var myMap, fullScreen = false;
+        var myMap,
+                fullScreen = false;
 
-        function init(){
-            myMap = new ymaps.Map("map", {
+        function init () {
+            myMap = new ymaps.Map('map', {
                 center: [57.630968, 39.840817],
                 zoom: 17
             });
+            $('#toggler').click(toggle);
         }
-
-        $('#toggler').click(toggle);
 
         function toggle () {
             fullScreen = !fullScreen;
