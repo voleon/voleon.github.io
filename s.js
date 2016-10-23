@@ -3,6 +3,8 @@ ymaps.ready(init);
 var map;
 var defaultZoom = 16;
 var userGeoLocation = null;
+var objectManager = null;
+var currentId = 0;
 
 function init () {
     map = new ymaps.Map('map', {
@@ -17,13 +19,19 @@ function init () {
         load(event.get('newBounds'))
     });
 
-    //var point = new ymaps.Placemark([57.630968, 39.840817], {}, {
-    //    preset: 'islands#blueGlyphCircleIcon',
-    //    iconGlyph: 'music',
-    //    iconGlyphColor: 'blue',
-    //    zIndex: 100
-    //});
-    //map.geoObjects.add(point);
+    objectManager = new ymaps.ObjectManager({
+        // Включаем кластеризацию.
+        clusterize: true,
+        // Опции кластеров задаются с префиксом cluster.
+        clusterHasBalloon: false,
+        // Опции геообъектов задаются с префиксом geoObject
+        geoObjectOpenBalloonOnClick: false
+    });
+
+    objectManager.objects.options.set('preset', 'islands#blueGlyphCircleIcon');
+    objectManager.objects.options.set('iconGlyph', 'music');
+    objectManager.objects.options.set('iconGlyphColor', 'blue');
+
 
     getGeo();
     setInterval(getGeo, 1000);
@@ -47,25 +55,35 @@ function getGeo() {
 }
 
 function load(bounds){
+
     var max_lat = Math.floor(bounds[1][0] * 1e6);
     var min_lat = Math.floor(bounds[0][0] * 1e6);
     var max_lng = Math.floor(bounds[1][1] * 1e6);
     var min_lng = Math.floor(bounds[0][1] * 1e6);
 
-    map.geoObjects.removeAll();
+    objectManager.removeAll();
+    var myObjects = [];
 
     for(var i=0;i<test_data.length;i++){
         var point = test_data[i];
         if(point.lat >= min_lat && point.lat <= max_lat && point.lng >= min_lng && point.lng <= max_lng){
-            var p = new ymaps.Placemark([point.lat/1e6, point.lng/1e6], {}, {
-                preset: 'islands#blueGlyphCircleIcon',
-                iconGlyph: 'music',
-                iconGlyphColor: 'blue',
-                zIndex: 100
+
+            myObjects.push({
+                type: 'Feature',
+                id: currentId++,
+                geometry: {
+                    type: 'Point',
+                    coordinates: [point.lat/1e6, point.lng/1e6]
+                },
+                properties: {
+                    balloonContent: "Содержимое балуна",
+                    clusterCaption: "Еще одна метка",
+                    hintContent: "Текст подсказки"
+                }
             });
-            map.geoObjects.add(p);
         }
     }
 
-    map.geoObjects.add(userGeoLocation);
+    objectManager.add(myObjects);
+    map.geoObjects.add(objectManager);
 }
