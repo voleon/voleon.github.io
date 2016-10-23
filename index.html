@@ -6,9 +6,23 @@
     <title>voleon map</title>
     <meta name="description" content="voleon map">
     <meta name="author" content="voleon">
+
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
 </head>
 
 <body>
-    base123
+    <div id="map" style="width: 600px; height: 400px"></div>
+
+    <script type="text/javascript">
+        ymaps.ready(init);
+        var myMap;
+
+        function init(){
+            myMap = new ymaps.Map("map", {
+                center: [55.76, 37.64],
+                zoom: 7
+            });
+        }
+    </script>
 </body>
 </html>
