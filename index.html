@@ -30,11 +30,12 @@
         ymaps.ready(init);
 
         var myMap;
+        var defaultZoom = 16;
 
         function init () {
             myMap = new ymaps.Map('map', {
                 center: [57.630968, 39.840817],
-                zoom: 17,
+                zoom: defaultZoom,
                 controls: [],
                 behaviors: []
             });
@@ -49,17 +50,21 @@
             myMap.geoObjects.add(point);
         }
 
-        var lastPost = null;
+        var userGeoLocation = null;
         function getGeo() {
             ymaps.geolocation.get({
                 provider: "browser"
             }).then(function (result) {
-                if(lastPost){
-                    myMap.geoObjects.remove(lastPost);
+                if(!userGeoLocation){
+                    userGeoLocation = new ymaps.Placemark(result.geoObjects.position, {}, {
+                        preset: 'islands#geolocationIcon',
+                        zIndex: 1
+                    });
+                    myMap.geoObjects.add(userGeoLocation);
+                }else{
+                    userGeoLocation.geometry.setCoordinates(result.geoObjects.position);
                 }
-                myMap.geoObjects.add(result.geoObjects);
-                myMap.setCenter(result.geoObjects.position, 17, {duration:500});
-                lastPost = result.geoObjects;
+                myMap.setCenter(result.geoObjects.position, defaultZoom, {duration:500});
             });
         }
         setInterval(getGeo, 3000);
