@@ -58,7 +58,7 @@
                     myMap.geoObjects.remove(lastPost);
                 }
                 myMap.geoObjects.add(result.geoObjects);
-                myMap.setCenter(result.geoObjects.position, 17, {duration:3000});
+                myMap.setCenter(result.geoObjects.position, 17, {duration:500});
                 lastPost = result.geoObjects;
             });
         }
